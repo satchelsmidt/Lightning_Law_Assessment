@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { getWine } from './api/getWine'
+import { BallBeat } from 'react-pure-loaders';
+
+import CountryDropdown from './components/CountryDropdown'
 
 function App() {
 
   const [reviewData, setReviewData] = useState([])
+  const [countries, setCountries] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState('')
+
 
 
   // const renderData = () => {
@@ -22,10 +28,18 @@ function App() {
 
   const showData = () => {
     console.log('our data: ', reviewData)
+    console.log('our COUNTRIES: ', countries)
+    console.log('our Country Selected: ', selectedCountry)
   }
 
-  //Effect hook runs once on page load, grabs data
 
+  //Function that runs when country selected from dropdown
+  const changeSelectedCountry = (country) => {
+    setSelectedCountry(country)
+  }
+
+
+  //Effect hook runs once on page load, grabs data
   useEffect(() => {
     getWine().then((res) => {
       console.log('the response: ', res)
@@ -38,15 +52,29 @@ function App() {
     })
   }, [])
 
+
+  //hook to parse out countries (runs when review data is fetched)
+  useEffect(() => {
+    let uniqueCountries = new Set()
+    for (let review of reviewData) {
+      if (review.country !== null) {
+        uniqueCountries.add(review.country)
+      }
+    }
+
+    setCountries(Array.from(uniqueCountries))
+  }, [reviewData])
+
+
+  //Component to render when data is being fetched
   if (reviewData.length === 0) {
     return <p>Loading Data</p>
   }
 
-
+  //Component to render when data is done fetching
   return (
     <div className="App">
-      <p> Hello </p>
-      {/* <button onClick={() => renderData()}>Click Me</button> */}
+      <CountryDropdown countryData={countries} changeSelectedCountry={(country) => changeSelectedCountry(country)} currentCountry={selectedCountry}></CountryDropdown>
       <button onClick={() => showData()}>Click Me</button>
     </div>
   );
