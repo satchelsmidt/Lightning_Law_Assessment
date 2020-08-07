@@ -3,8 +3,10 @@ import { getWine } from './api/getWine'
 import { BallBeat } from 'react-pure-loaders';
 
 import CountryDropdown from './components/CountryDropdown'
+import TotalReviewsBox from './components/TotalReviewsBox'
 
-function App() {
+
+export default function App() {
 
   const [reviewData, setReviewData] = useState([])
   const [countries, setCountries] = useState([])
@@ -12,22 +14,6 @@ function App() {
   const [selectedCountryReviews, setSelectedCountryReviews] = useState([])
 
   const [loading, setLoading] = useState(true)
-
-
-
-  // const renderData = () => {
-  //   // TODO: enable this again
-
-  //   getWine().then((res) => {
-  //     console.log('the response: ', res)
-  //     let data = []
-  //     for (let i of res.data) {
-  //       data.push(i)
-  //     }
-
-  //     setReviewData(data)
-  //   })
-  // }
 
   const showData = () => {
     console.log('our data: ', reviewData)
@@ -89,9 +75,6 @@ function App() {
 
 
   //Component to render when data is being fetched
-  // if (reviewData.length === 0) {
-  //   return <p>Loading Data</p>
-  // }
   if (loading === true) {
     return <div>
       <h1>Fetching Wine Reviews</h1>
@@ -106,9 +89,8 @@ function App() {
   return (
     <div className="App">
       <CountryDropdown countryData={countries} changeSelectedCountry={(country) => changeSelectedCountry(country)} currentCountry={selectedCountry}></CountryDropdown>
+      <TotalReviewsBox selectedCountryReviews={selectedCountryReviews}></TotalReviewsBox>
       <button onClick={() => showData()}>Click Me</button>
     </div>
   );
 }
-
-export default App;
