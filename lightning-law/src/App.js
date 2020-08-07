@@ -9,6 +9,7 @@ function App() {
   const [reviewData, setReviewData] = useState([])
   const [countries, setCountries] = useState([])
   const [selectedCountry, setSelectedCountry] = useState('')
+  const [selectedCountryReviews, setSelectedCountryReviews] = useState([])
 
   const [loading, setLoading] = useState(true)
 
@@ -32,12 +33,23 @@ function App() {
     console.log('our data: ', reviewData)
     console.log('our COUNTRIES: ', countries)
     console.log('our Country Selected: ', selectedCountry)
+    console.log('our Country REVIEWS: ', selectedCountryReviews)
   }
 
 
   //Function that runs when country selected from dropdown
   const changeSelectedCountry = (country) => {
     setSelectedCountry(country)
+  }
+
+
+  //Function that runs to filter reviews by selected country
+  const filterReviews = () => {
+    let countryReviews = reviewData.filter((review) => {
+      return review.country === selectedCountry
+    })
+
+    setSelectedCountryReviews(countryReviews)
   }
 
 
@@ -67,6 +79,13 @@ function App() {
 
     setCountries(Array.from(uniqueCountries))
   }, [reviewData])
+
+
+  //hook to run when we change our selected country
+  useEffect(() => {
+    filterReviews()
+
+  }, [selectedCountry])
 
 
   //Component to render when data is being fetched
