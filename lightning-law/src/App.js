@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { getWine } from './api/getWine'
 import { BallBeat } from 'react-pure-loaders';
 import ReviewData from './ReviewData.json'
-import ReactPaginate from 'react-paginate'
 import CountryDropdown from './components/CountryDropdown'
 import TotalReviewsBox from './components/TotalReviewsBox'
 import ReviewTable from './components/ReviewTable'
+import Dropdown from 'react-dropdown'
 
 
 export default function App() {
@@ -92,37 +92,46 @@ export default function App() {
     filterReviews()
   }
 
+  const handleCountChange = (e) => {
+    console.log('this is e: ', e)
+    setPerPage(parseInt(e.value))
+  }
 
-  //TODO: reenable this eventually
-  //Effect hook runs once on page load, grabs data
-  // useEffect(() => {
-  //   getWine().then((res) => {
-  //     console.log('the response: ', res)
-  //     let data = []
-  //     for (let i of res.data) {
-  //       data.push(i)
-  //     }
 
-  //     setReviewData(data)
-  //     setLoading(false)
-  //   })
-  // }, [])
+  // Effect hook runs once on page load, grabs data
+  useEffect(() => {
+    getWine().then((res) => {
+      console.log('the response: ', res)
+      let data = []
+      for (let i of res.data) {
+        data.push(i)
+      }
 
+      setReviewData(data)
+      setLoading(false)
+    })
+  }, [])
+
+
+
+  //NOTE: This is only in place to grab data from local json file, not used in production or if api link is running smoothly
 
   //hook to grab review data initially
-  useEffect(() => {
-    // if (localStorage.getItem('ReviewData') !== null) {
-    //   console.log('country: ', setSelectedCountry(localStorage.getItem('SelectedCountry') || '')
-    //   )
-    //   getInitialState()
-    //   setLoading(false)
-    // }
-    // else {
-    setReviewData(ReviewData)
-    // localStorage.setItem('ReviewData', ReviewData);
-    setLoading(false)
-    // }
-  }, [])
+  // useEffect(() => {
+  //   // if (localStorage.getItem('ReviewData') !== null) {
+  //   //   console.log('country: ', setSelectedCountry(localStorage.getItem('SelectedCountry') || '')
+  //   //   )
+  //   //   getInitialState()
+  //   //   setLoading(false)
+  //   // }
+  //   // else {
+  //   setReviewData(ReviewData)
+  //   // localStorage.setItem('ReviewData', ReviewData);
+  //   setLoading(false)
+  //   // }
+  // }, [])
+  //
+
 
 
   //hook to parse out countries (runs when review data is fetched)
@@ -161,15 +170,68 @@ export default function App() {
 
   //Component to render when data is done fetching
   return (
-    <div className="App">
-      <CountryDropdown countryData={countries} changeSelectedCountry={(country) => changeSelectedCountry(country)} currentCountry={selectedCountry}></CountryDropdown>
-      <TotalReviewsBox selectedCountryReviews={selectedCountryReviews}></TotalReviewsBox>
+    <div className="App" style={styles.mainContainer}>
+
+      <div className="TopContainer" style={styles.topContainer}>
+        <div className="innerContainer" style={styles.innerContainer}>
+          <TotalReviewsBox selectedCountryReviews={selectedCountryReviews}></TotalReviewsBox>
+        </div>
+        <div className="innerContainer" style={styles.innerContainer}>
+          <CountryDropdown countryData={countries} changeSelectedCountry={(country) => changeSelectedCountry(country)} currentCountry={selectedCountry}></CountryDropdown>
+        </div>
+      </div>
+
       <br></br>
-      {selectedCountryReviews.length > 0 && <input type="text" value={searchTerm} placeholder={'Search for Reviews'} onChange={(e) => setSearchTerm(e.target.value)}></input>}
-      {selectedCountryReviews.length > 0 && <button onClick={() => handleSearch()}>Search</button>}
-      {searchTerm && <button onClick={() => handleClear()}>Clear Filter</button>}
-      <br></br>
-      {selectedCountryReviews.length > 0 && <ReviewTable selectedCountryReviews={selectedCountryReviews} handlePageClick={(e) => handlePageClick(e)} offset={offset} perPage={perPage} pageCount={pageCount}></ReviewTable>}
+
+      <div className="Bottom Container" style={styles.bottomContainer}>
+        <div className="TopContainer" style={styles.topContainer}>
+
+          <div className="innerContainer" style={styles.innerContainer}>
+            {selectedCountryReviews.length > 0 && <input type="text" value={searchTerm} placeholder={'Search for Reviews'} onChange={(e) => setSearchTerm(e.target.value)}></input>}
+          </div>
+
+          <div className="innerContainer" style={styles.innerContainer}>
+            {selectedCountryReviews.length > 0 && <button onClick={() => handleSearch()}>Search</button>}
+          </div>
+
+          <div className="innerContainer" style={styles.innerContainer}>
+            {searchTerm && <button onClick={() => handleClear()}>Clear Filter</button>}
+          </div>
+
+          <div className="innerContainer" style={styles.innerContainer}>
+            {selectedCountryReviews.length > 0 && <p>Reviews per Page (style not applying correctly, but works): </p>}
+            {selectedCountryReviews.length > 0 && <div>
+              <Dropdown options={['10', '20', '30', '50', '100']} onChange={(e) => handleCountChange(e)} value={perPage} placeholder='Reviews per Page' /></div>}
+          </div>
+
+        </div>
+        <br></br>
+        {selectedCountryReviews.length > 0 && <ReviewTable selectedCountryReviews={selectedCountryReviews} handlePageClick={(e) => handlePageClick(e)} offset={offset} perPage={perPage} pageCount={pageCount}></ReviewTable>}
+      </div>
     </div>
   );
+}
+
+const styles = {
+  mainContainer: {
+    'display': 'flex',
+    'flexDirection': 'column',
+    'alignItems': 'center',
+    'justifyContent': 'center',
+  },
+  topContainer: {
+    'display': 'flex',
+    'flexDirection': 'row',
+    'alignItems': 'center',
+    'justifyContent': 'center',
+  },
+  bottomContainer: {
+    'display': 'flex',
+    'flexDirection': 'column',
+    'alignItems': 'center',
+    'justifyContent': 'center',
+  },
+  innerContainer: {
+    'margin': '30px'
+  }
 }
