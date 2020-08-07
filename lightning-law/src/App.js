@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { getWine } from './api/getWine'
 import { BallBeat } from 'react-pure-loaders';
 import ReviewData from './ReviewData.json'
-
+import ReactPaginate from 'react-paginate'
 import CountryDropdown from './components/CountryDropdown'
 import TotalReviewsBox from './components/TotalReviewsBox'
+import ReviewTable from './components/ReviewTable'
 
 
 export default function App() {
@@ -13,20 +14,33 @@ export default function App() {
   const [countries, setCountries] = useState([])
   const [selectedCountry, setSelectedCountry] = useState('')
   const [selectedCountryReviews, setSelectedCountryReviews] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
 
   const [loading, setLoading] = useState(true)
 
-  const showData = () => {
-    console.log('our data: ', reviewData)
-    console.log('our COUNTRIES: ', countries)
-    console.log('our Country Selected: ', selectedCountry)
-    console.log('our Country REVIEWS: ', selectedCountryReviews)
-  }
+  // //pagination data
+  const [offset, setOffset] = useState(0)
+  const [perPage, setPerPage] = useState(10)
+  const [pageCount, setPageCount] = useState(null)
+
+
+  //TODO: make this functional
+  // const getInitialState = () => {
+  //   setReviewData(localStorage.getItem('ReviewData') || [])
+  //   // setCountries(localStorage.getItem('Countries') || [])
+  //   setSelectedCountry(localStorage.getItem('SelectedCountry') || '')
+  //   setSelectedCountryReviews(localStorage.getItem('SelectedCountryReviews') || [])
+
+  //   setOffset(localStorage.getItem('Offset') || 0)
+  //   setPerPage(localStorage.getItem('PerPage') || 10)
+  //   setPageCount(localStorage.getItem('PageCount') || null)
+  // }
 
 
   //Function that runs when country selected from dropdown
   const changeSelectedCountry = (country) => {
     setSelectedCountry(country)
+    // localStorage.setItem('SelectedCountry', country);
   }
 
 
@@ -36,26 +50,46 @@ export default function App() {
       return review.country === selectedCountry
     })
 
+    setPageCount(Math.ceil(countryReviews.length / perPage))
+    // localStorage.setItem('PageCount', countryReviews.length / perPage);
+
     setSelectedCountryReviews(countryReviews)
+    // localStorage.setItem('SelectedCountryReviews', countryReviews);
   }
 
 
-  const renderReviews=()=>{
-    // return selectedCountryReviews.map((review) => {
-    return selectedCountryReviews.map((review) => {
-      return <div>
-        <p>designation: {review.designation}</p>
-        <p>points: {review.points}</p>
-        <p>price: {review.price}</p>
-        <p>province: {review.province}</p>
-        <p>tasterName: {review.tasterName}</p>
-        <p>title: {review.title}</p>
-        <p>variety: {review.variety}</p>
-        <p>winery: {review.winery}</p>
-        <p></p>
-        <br></br>
-      </div>
+  //handle a click of the page
+  const handlePageClick = (e) => {
+    const selectedPage = e.selected;
+    const offset = selectedPage * perPage;
+
+    setOffset(offset)
+    // localStorage.setItem('Offset', offset);
+  };
+
+
+  //handle search term
+  const handleSearch = () => {
+
+    let searchedReviews = selectedCountryReviews.filter((review) => {
+      return (
+        review.title === searchTerm ||
+        review.variety === searchTerm ||
+        review.winery === searchTerm ||
+        review.designation === searchTerm
+      )
     })
+
+    setPageCount(Math.ceil(searchedReviews.length / perPage))
+    setSelectedCountryReviews(searchedReviews)
+  }
+
+
+  //handle clear search term
+  const handleClear = () => {
+
+    setSearchTerm('')
+    filterReviews()
   }
 
 
@@ -77,8 +111,17 @@ export default function App() {
 
   //hook to grab review data initially
   useEffect(() => {
+    // if (localStorage.getItem('ReviewData') !== null) {
+    //   console.log('country: ', setSelectedCountry(localStorage.getItem('SelectedCountry') || '')
+    //   )
+    //   getInitialState()
+    //   setLoading(false)
+    // }
+    // else {
     setReviewData(ReviewData)
+    // localStorage.setItem('ReviewData', ReviewData);
     setLoading(false)
+    // }
   }, [])
 
 
@@ -91,7 +134,10 @@ export default function App() {
       }
     }
 
-    setCountries(Array.from(uniqueCountries))
+    let uniqueCountriesArray = Array.from(uniqueCountries)
+
+    setCountries(uniqueCountriesArray)
+    // localStorage.setItem('Countries', uniqueCountriesArray);
   }, [reviewData])
 
 
@@ -119,9 +165,11 @@ export default function App() {
       <CountryDropdown countryData={countries} changeSelectedCountry={(country) => changeSelectedCountry(country)} currentCountry={selectedCountry}></CountryDropdown>
       <TotalReviewsBox selectedCountryReviews={selectedCountryReviews}></TotalReviewsBox>
       <br></br>
-      <h1>Reviews: </h1>
-      {renderReviews()}
-      <button onClick={() => showData()}>Click Me</button>
+      {selectedCountryReviews.length > 0 && <input type="text" value={searchTerm} placeholder={'Search for Reviews'} onChange={(e) => setSearchTerm(e.target.value)}></input>}
+      {selectedCountryReviews.length > 0 && <button onClick={() => handleSearch()}>Search</button>}
+      {searchTerm && <button onClick={() => handleClear()}>Clear Filter</button>}
+      <br></br>
+      {selectedCountryReviews.length > 0 && <ReviewTable selectedCountryReviews={selectedCountryReviews} handlePageClick={(e) => handlePageClick(e)} offset={offset} perPage={perPage} pageCount={pageCount}></ReviewTable>}
     </div>
   );
 }
