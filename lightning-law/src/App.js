@@ -10,6 +10,8 @@ function App() {
   const [countries, setCountries] = useState([])
   const [selectedCountry, setSelectedCountry] = useState('')
 
+  const [loading, setLoading] = useState(true)
+
 
 
   // const renderData = () => {
@@ -49,6 +51,7 @@ function App() {
       }
 
       setReviewData(data)
+      setLoading(false)
     })
   }, [])
 
@@ -67,8 +70,17 @@ function App() {
 
 
   //Component to render when data is being fetched
-  if (reviewData.length === 0) {
-    return <p>Loading Data</p>
+  // if (reviewData.length === 0) {
+  //   return <p>Loading Data</p>
+  // }
+  if (loading === true) {
+    return <div>
+      <h1>Fetching Wine Reviews</h1>
+      <BallBeat
+        color={'#123abc'}
+        loading={loading}
+      />
+    </div>
   }
 
   //Component to render when data is done fetching
