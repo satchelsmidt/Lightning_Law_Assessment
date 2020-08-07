@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getWine } from './api/getWine'
 import { BallBeat } from 'react-pure-loaders';
+import ReviewData from './ReviewData.json'
 
 import CountryDropdown from './components/CountryDropdown'
 import TotalReviewsBox from './components/TotalReviewsBox'
@@ -39,18 +40,45 @@ export default function App() {
   }
 
 
-  //Effect hook runs once on page load, grabs data
-  useEffect(() => {
-    getWine().then((res) => {
-      console.log('the response: ', res)
-      let data = []
-      for (let i of res.data) {
-        data.push(i)
-      }
-
-      setReviewData(data)
-      setLoading(false)
+  const renderReviews=()=>{
+    // return selectedCountryReviews.map((review) => {
+    return selectedCountryReviews.map((review) => {
+      return <div>
+        <p>designation: {review.designation}</p>
+        <p>points: {review.points}</p>
+        <p>price: {review.price}</p>
+        <p>province: {review.province}</p>
+        <p>tasterName: {review.tasterName}</p>
+        <p>title: {review.title}</p>
+        <p>variety: {review.variety}</p>
+        <p>winery: {review.winery}</p>
+        <p></p>
+        <br></br>
+      </div>
     })
+  }
+
+
+  //TODO: reenable this eventually
+  //Effect hook runs once on page load, grabs data
+  // useEffect(() => {
+  //   getWine().then((res) => {
+  //     console.log('the response: ', res)
+  //     let data = []
+  //     for (let i of res.data) {
+  //       data.push(i)
+  //     }
+
+  //     setReviewData(data)
+  //     setLoading(false)
+  //   })
+  // }, [])
+
+
+  //hook to grab review data initially
+  useEffect(() => {
+    setReviewData(ReviewData)
+    setLoading(false)
   }, [])
 
 
@@ -90,6 +118,9 @@ export default function App() {
     <div className="App">
       <CountryDropdown countryData={countries} changeSelectedCountry={(country) => changeSelectedCountry(country)} currentCountry={selectedCountry}></CountryDropdown>
       <TotalReviewsBox selectedCountryReviews={selectedCountryReviews}></TotalReviewsBox>
+      <br></br>
+      <h1>Reviews: </h1>
+      {renderReviews()}
       <button onClick={() => showData()}>Click Me</button>
     </div>
   );
