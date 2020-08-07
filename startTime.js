@@ -1,2 +1,2 @@
 //Satchel Smidt
-//Start Time: 
+//Start Time: 1:50 pm PST
