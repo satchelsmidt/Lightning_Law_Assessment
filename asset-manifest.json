@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/Lightning_Law_Assessment/static/css/main.f0397217.chunk.css",
+    "main.js": "/Lightning_Law_Assessment/static/js/main.aa8b56ec.chunk.js",
+    "main.js.map": "/Lightning_Law_Assessment/static/js/main.aa8b56ec.chunk.js.map",
+    "runtime-main.js": "/Lightning_Law_Assessment/static/js/runtime-main.fd35c18f.js",
+    "runtime-main.js.map": "/Lightning_Law_Assessment/static/js/runtime-main.fd35c18f.js.map",
+    "static/js/2.2cee87c6.chunk.js": "/Lightning_Law_Assessment/static/js/2.2cee87c6.chunk.js",
+    "static/js/2.2cee87c6.chunk.js.map": "/Lightning_Law_Assessment/static/js/2.2cee87c6.chunk.js.map",
+    "index.html": "/Lightning_Law_Assessment/index.html",
+    "precache-manifest.8b5201e52a0f7816558789d4eff87dda.js": "/Lightning_Law_Assessment/precache-manifest.8b5201e52a0f7816558789d4eff87dda.js",
+    "service-worker.js": "/Lightning_Law_Assessment/service-worker.js",
+    "static/css/main.f0397217.chunk.css.map": "/Lightning_Law_Assessment/static/css/main.f0397217.chunk.css.map",
+    "static/js/2.2cee87c6.chunk.js.LICENSE.txt": "/Lightning_Law_Assessment/static/js/2.2cee87c6.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.fd35c18f.js",
+    "static/js/2.2cee87c6.chunk.js",
+    "static/css/main.f0397217.chunk.css",
+    "static/js/main.aa8b56ec.chunk.js"
+  ]
+}
